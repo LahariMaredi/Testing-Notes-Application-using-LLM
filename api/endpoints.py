@@ -1,0 +1,5 @@
+LOGIN = "/users/login"
+REGISTER = "/users/register"
+GET_NOTES = "/notes"
+CREATE_NOTE = "/notes"
+DELETE_NOTE = "/notes/{id}"
