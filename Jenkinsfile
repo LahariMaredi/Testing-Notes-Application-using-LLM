@@ -5,20 +5,20 @@ pipeline {
 
         stage('Checkout Code') {
             steps {
-                git 'https://github.com/LahariMaredi/Notes-Testing-App.git'
+                git branch: 'main', url: 'https://github.com/LahariMaredi/Notes-Testing-App.git'
             }
         }
 
         stage('Install Dependencies') {
             steps {
                 bat 'python -m venv venv'
-                bat 'venv\\Scripts\\activate && pip install -r requirements.txt'
+                bat 'venv\\Scripts\\python -m pip install -r requirements.txt'
             }
         }
 
         stage('Run Tests (Parallel)') {
             steps {
-                bat 'venv\\Scripts\\activate && pytest -n 4 --alluredir=allure-results --html=report.html --self-contained-html'
+                bat 'venv\\Scripts\\python -m pytest -n 4 --alluredir=allure-results --html=report.html --self-contained-html'
             }
         }
 
