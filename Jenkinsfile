@@ -18,34 +18,42 @@ pipeline {
 
         stage('Run Tests (Parallel)') {
             steps {
-                bat 'venv\\Scripts\\python -m pytest -n 4 --alluredir=allure-results --html=report.html --self-contained-html'
+                bat 'venv\\Scripts\\activate && pytest -n 4 --alluredir=allure-results --html=report.html --self-contained-html'
             }
         }
 
         stage('Generate Allure Report') {
-    steps {
-        allure([
-            includeProperties: false,
-            jdk: '',
-            results: [[path: 'allure-results']]
-        ])
-           }
-      }
+            steps {
+                allure([
+                    includeProperties: false,
+                    results: [[path: 'allure-results']]
+                ])
+            }
+        }
 
         stage('Publish Reports') {
             steps {
-                publishHTML([
+                publishHTML(target: [
                     reportDir: '.',
                     reportFiles: 'report.html',
-                    reportName: 'Pytest HTML Report'
+                    reportName: 'Pytest HTML Report',
+                    keepAll: true,
+                    alwaysLinkToLastBuild: true,
+                    allowMissing: true
                 ])
             }
         }
 
         stage('Archive Artifacts') {
             steps {
-                archiveArtifacts artifacts: 'report.html, allure-report/**, screenshots/**, logs/**', fingerprint: true
+                archiveArtifacts artifacts: 'report.html, allure-results/**, screenshots/**, logs/**', fingerprint: true
             }
+        }
+    }
+
+    post {
+        always {
+            archiveArtifacts artifacts: 'report.html, allure-results/**', allowEmptyArchive: true
         }
     }
 }
