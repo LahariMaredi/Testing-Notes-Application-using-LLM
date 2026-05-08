@@ -1,4 +1,6 @@
 import time
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
 from api.api_client import APIClient
 from pages.login_page import LoginPage
 from pages.notes_page import NotesPage
@@ -20,6 +22,9 @@ def test_api_ui_delete_sync(driver):
     delete = api.delete_note(note_id)
     assert delete.status_code in [200, 204]
 
+    # Wait for backend to process
+    time.sleep(1)
+
     # Step 3: Open UI
     login = LoginPage(driver)
     notes = NotesPage(driver)
@@ -31,7 +36,11 @@ def test_api_ui_delete_sync(driver):
     # Step 4: Refresh UI
     driver.refresh()
 
-    # Step 5: Validate note is NOT visible
+    # Step 5: Wait for note to be removed from UI
+    note_locator = (By.XPATH, f"//div[@data-testid='note-card-title' and normalize-space(text())='{title}']")
+    notes.wait.until(EC.invisibility_of_element_located(note_locator))
+
+    # Step 6: Validate note is NOT visible
     assert not notes.is_note_present(title), "Deleted note still visible in UI"
 
 

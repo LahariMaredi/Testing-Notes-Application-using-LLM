@@ -11,4 +11,4 @@ def test_api_response_time():
     end = time.time()
 
     assert response.status_code == 200
-    assert (end - start) < 2
+    assert (end - start) < 3

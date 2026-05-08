@@ -18,7 +18,7 @@ pipeline {
 
         stage('Run Tests (Parallel)') {
             steps {
-                bat 'venv\\Scripts\\activate && pytest -n 4 --alluredir=allure-results --html=report.html --self-contained-html'
+                bat 'venv\\Scripts\\python -m pytest -n 4 --alluredir=allure-results --html=report.html --self-contained-html'
             }
         }
 
@@ -26,6 +26,7 @@ pipeline {
             steps {
                 allure([
                     includeProperties: false,
+                    jdk: '',
                     results: [[path: 'allure-results']]
                 ])
             }
