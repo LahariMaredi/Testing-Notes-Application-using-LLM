@@ -1,23 +1,59 @@
-version: '3'
+# version: '3'
 
 services:
 
-  selenium:
-    image: selenium/standalone-chrome
-    shm_size: 2gb
+  selenium-hub:
+    image: selenium/hub:4.21.0
+    container_name: selenium-hub
     ports:
+      - "4442:4442"
+      - "4443:4443"
       - "4444:4444"
+
+  chrome:
+    image: selenium/node-chrome:4.21.0
+    shm_size: 2gb
+    depends_on:
+      - selenium-hub
     environment:
-      - SE_NODE_MAX_SESSIONS=2
-      - SE_NODE_OVERRIDE_MAX_SESSIONS=true
+      - SE_EVENT_BUS_HOST=selenium-hub
+      - SE_EVENT_BUS_PUBLISH_PORT=4442
+      - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+      - SE_NODE_MAX_SESSIONS=1
+    deploy:
+      replicas: 4
 
   tests:
     build: .
     depends_on:
-      - selenium
+      - selenium-hub
+      - chrome
     environment:
-      - SELENIUM_REMOTE_URL=http://selenium:4444/wd/hub
+      - SELENIUM_REMOTE_URL=http://selenium-hub:4444/wd/hub
     volumes:
       - .:/app
     working_dir: /app
-    command: pytest -n 2 --reruns 4 --reruns-delay 5 --alluredir=allure-results --html=report.html --self-contained-html
+    command: pytest -n 4 --reruns 4 --reruns-delay 5 --alluredir=allure-results --html=report.html --self-contained-html
+  # version: '3'
+
+# services:
+
+#   selenium:
+#     image: selenium/standalone-chrome
+#     shm_size: 2gb
+#     ports:
+#       - "4444:4444"
+#     environment:
+#       - SE_NODE_MAX_SESSIONS=2
+#       - SE_NODE_OVERRIDE_MAX_SESSIONS=true
+
+#   tests:
+#     build: .
+#     depends_on:
+#       - selenium
+#     environment:
+#       - SELENIUM_REMOTE_URL=http://selenium:4444/wd/hub
+#     volumes:
+#       - .:/app
+#     working_dir: /app
+#     command: pytest -n 2 --reruns 4 --reruns-delay 5 --alluredir=allure-results --html=report.html --self-contained-html
