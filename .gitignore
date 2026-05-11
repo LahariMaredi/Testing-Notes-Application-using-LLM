@@ -7,3 +7,5 @@ allure-report/
 *.pyc
 reports/
 screenshots/
+.env
+.env.local

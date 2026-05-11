@@ -1,11 +1,16 @@
 pipeline {
     agent any
 
+    environment {
+        // Inject GROQ_API_KEY from Jenkins Credentials
+        GROQ_API_KEY = credentials('GROQ_API_KEY')
+    }
+
     stages {
 
         stage('Checkout Code') {
             steps {
-                git branch: 'main', url: 'https://github.com/LahariMaredi/Notes-Testing-App.git'
+                git branch: 'main', url: 'https://github.com/LahariMaredi/Testing-Notes-Application-using-LLM.git'
             }
         }
 
@@ -18,6 +23,7 @@ pipeline {
 
         stage('Run Tests (Parallel)') {
             steps {
+                // GROQ_API_KEY is automatically passed as environment variable
                 bat 'venv\\Scripts\\python -m pytest -n 4 --alluredir=allure-results --html=report.html --self-contained-html'
             }
         }

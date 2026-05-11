@@ -7,3 +7,7 @@ allure-pytest
 pyyaml
 pytest-html
 pytest-rerunfailures
+groq
+pandas
+openpyxl
+python-dotenv

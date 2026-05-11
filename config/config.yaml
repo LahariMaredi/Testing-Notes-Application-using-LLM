@@ -7,3 +7,4 @@ timeout: 10
 email: "laharimaredi0103@gmail.com"
 password: "lahariM3*"
 name: "Test User"
+GROQ_API_KEY: "${GROQ_API_KEY}" # Set via environment variable
