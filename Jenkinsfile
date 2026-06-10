@@ -24,13 +24,7 @@ stages {
 
     stage('Run Tests (Parallel)') {
         steps {
-            bat '''
-            venv\\Scripts\\python -m pytest ^
-            -n 4 ^
-            --alluredir=allure-results ^
-            --html=report.html ^
-            --self-contained-html
-            '''
+            bat 'venv\\Scripts\\python -m pytest -n 4 --alluredir=allure-results --html=report.html --self-contained-html'
         }
     }
 
@@ -70,14 +64,7 @@ stages {
     stage('Archive Artifacts') {
         steps {
             archiveArtifacts(
-                artifacts: '''
-                    report.html,
-                    allure-results/**,
-                    allure-report/**,
-                    reports/**,
-                    screenshots/**,
-                    logs/**
-                ''',
+                artifacts: 'report.html,allure-results/**,allure-report/**,reports/**,screenshots/**,logs/**',
                 fingerprint: true,
                 allowEmptyArchive: true
             )
@@ -88,12 +75,7 @@ stages {
 post {
     always {
         archiveArtifacts(
-            artifacts: '''
-                report.html,
-                allure-results/**,
-                allure-report/**,
-                reports/**
-            ''',
+            artifacts: 'report.html,allure-results/**,allure-report/**,reports/**',
             allowEmptyArchive: true
         )
     }
