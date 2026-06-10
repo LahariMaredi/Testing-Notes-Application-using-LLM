@@ -1,7 +1,5 @@
 pipeline {
 agent any
-
-```
 environment {
     GROQ_API_KEY = credentials('GROQ_API_KEY')
 }
@@ -88,6 +86,5 @@ post {
         echo 'Build failed. Check AI Failure Analysis reports.'
     }
 }
-```
 
 }
